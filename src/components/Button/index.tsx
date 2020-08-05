@@ -15,4 +15,4 @@ const Button: React.FC<ButtonProps> = ({ children }) => {
   );
 };
 
-export { Button };
+export default Button;

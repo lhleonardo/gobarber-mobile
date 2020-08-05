@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import { Input } from '../../components/Input';
-import { Button } from '../../components/Button';
+import Button from '../../components/Button';
 
 import logo from '../../assets/logo.png';
 
@@ -33,10 +33,6 @@ const SignIn: React.FC = () => {
   const handleSubmit = useCallback((data: object) => {
     console.log(data);
   }, []);
-
-  const click = () => {
-    console.log('Clicado');
-  };
 
   return (
     <>
@@ -63,7 +59,7 @@ const SignIn: React.FC = () => {
               <Input name="email" icon="mail" placeholder="E-mail" />
               <Input name="password" icon="lock" placeholder="Senha" />
 
-              <Button onPress={click}>Entrar</Button>
+              <Button onPress={() => console.log('Clicou?')}>Entrar</Button>
 
               <ForgotPassword>
                 <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
