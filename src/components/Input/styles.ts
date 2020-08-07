@@ -1,11 +1,23 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 
-export const Container = styled.View`
+interface ContainerProps {
+  isFocused: boolean;
+}
+
+export const Container = styled.View<ContainerProps>`
   width: 100%;
   height: 50px;
   padding: 0 16px;
 
   background: #232129;
+  border: 2px solid #232129;
+
+  ${props =>
+    props.isFocused &&
+    css`
+      border: 2px solid #ff9000;
+    `}
+
   border-radius: 10px;
   margin-bottom: 8px;
 

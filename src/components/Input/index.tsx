@@ -1,8 +1,10 @@
 import React, {
   useEffect,
   useRef,
+  useState,
   useImperativeHandle,
   forwardRef,
+  useCallback,
 } from 'react';
 
 import { TextInputProps } from 'react-native';
@@ -27,13 +29,21 @@ const MyInput: React.ForwardRefRenderFunction<InputRefProps, InputProps> = (
   { name, icon, ...rest },
   ref,
 ) => {
+  const [filled, setIsFilled] = useState(false);
+  const [focus, setFocused] = useState(false);
+
   const { registerField, defaultValue = '', fieldName, error } = useField(name);
   const inputValueRef = useRef<InputValueReference>({
     value: defaultValue,
   });
-
   const inputElementRef = useRef<any>(null);
 
+  const handleInputFocus = useCallback(() => setFocused(true), []);
+  const handleInputBlur = useCallback(() => {
+    setFocused(false);
+
+    setIsFilled(!!inputValueRef.current.value);
+  }, []);
   // passar funcionalidade de um componente interno para componente pai
   // Quando alguém chamar o componente e usar uma referência,
   // tal como  <MyInput ref={inputRef}>, inputRef terá o método focus()
@@ -60,11 +70,17 @@ const MyInput: React.ForwardRefRenderFunction<InputRefProps, InputProps> = (
     });
   }, [fieldName, registerField]);
   return (
-    <Container>
-      <Icon name={icon} size={20} color="#666360" />
+    <Container isFocused={focus}>
+      <Icon
+        name={icon}
+        size={20}
+        color={focus || filled ? '#ff9000' : '#666360'}
+      />
       <TextInput
         ref={inputElementRef}
         keyboardAppearance="dark"
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
         placeholderTextColor="#666360"
         onChangeText={value => {
           inputValueRef.current.value = value;
