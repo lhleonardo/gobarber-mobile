@@ -3,13 +3,12 @@ import styled from 'styled-components/native';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { Platform } from 'react-native';
 
-export const Container = styled.SafeAreaView`
+export const Container = styled.View`
   flex: 1;
-
   align-items: center;
   justify-content: center;
 
-  padding: 0px 40px ${Platform.OS === 'android' ? 10 : 50}px;
+  padding: 0px 40px ${Platform.OS === 'android' ? 60 : 50}px;
 `;
 
 export const Text = styled.Text`

@@ -34,6 +34,9 @@ const MyInput: React.ForwardRefRenderFunction<InputRefProps, InputProps> = (
 
   const inputElementRef = useRef<any>(null);
 
+  // passar funcionalidade de um componente interno para componente pai
+  // Quando alguém chamar o componente e usar uma referência,
+  // tal como  <MyInput ref={inputRef}>, inputRef terá o método focus()
   useImperativeHandle(ref, () => ({
     focus() {
       inputElementRef.current.focus();
