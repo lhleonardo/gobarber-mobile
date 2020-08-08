@@ -102,7 +102,7 @@ const SignUp: React.FC = () => {
             >
               <Input
                 autoCapitalize="words"
-                name="email"
+                name="name"
                 icon="user"
                 placeholder="Nome completo"
                 returnKeyType="next"
@@ -113,7 +113,7 @@ const SignUp: React.FC = () => {
                 keyboardType="email-address"
                 autoCorrect={false}
                 autoCapitalize="none"
-                name="name"
+                name="email"
                 icon="mail"
                 placeholder="E-mail"
                 returnKeyType="next"
