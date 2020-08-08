@@ -5,6 +5,8 @@ import { View, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Routes from './routes';
 
+import { AppContext } from './hooks';
+
 const App: React.FC = () => {
   return (
     <>
@@ -13,11 +15,13 @@ const App: React.FC = () => {
         backgroundColor="#312e38"
         translucent
       />
-      <View style={{ backgroundColor: '#312e38', flex: 1 }}>
-        <NavigationContainer>
-          <Routes />
-        </NavigationContainer>
-      </View>
+      <AppContext>
+        <View style={{ backgroundColor: '#312e38', flex: 1 }}>
+          <NavigationContainer>
+            <Routes />
+          </NavigationContainer>
+        </View>
+      </AppContext>
     </>
   );
 };

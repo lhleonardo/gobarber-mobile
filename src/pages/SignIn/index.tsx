@@ -19,6 +19,8 @@ import extractValidationMessage from '../../utils/extractValidationMessage';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 
+import { useAuth } from '../../hooks/auth';
+
 import logo from '../../assets/logo.png';
 
 import {
@@ -42,6 +44,8 @@ const SignIn: React.FC = () => {
 
   const navigation = useNavigation();
 
+  const { signIn } = useAuth();
+
   const handleSubmit = useCallback(async (data: SignInFormData) => {
     try {
       formRef.current?.setErrors({});
@@ -55,16 +59,14 @@ const SignIn: React.FC = () => {
       });
 
       await schema.validate(data, { abortEarly: false });
+
+      await signIn(data);
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = extractValidationMessage(err);
         formRef.current?.setErrors(errors);
       } else {
-        Alert.alert(
-          'Erro na autenticação',
-          'Usuário e/ou senha incorretos',
-          [],
-        );
+        Alert.alert('Erro na autenticação', 'Usuário e/ou senha incorretos');
       }
     }
   }, []);
