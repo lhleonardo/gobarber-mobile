@@ -8,18 +8,27 @@ import {
   Platform,
   TextInput,
   Keyboard,
+  Alert,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+import * as Yup from 'yup';
+import extractValidationMessage from '../../utils/extractValidationMessage';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 
 import logo from '../../assets/logo.png';
 
 import { Container, Text, BackToSignIn, BackToSignInText } from './styles';
+
+interface SignUpFormData {
+  email: string;
+  name: string;
+  password: string;
+}
 
 const SignUp: React.FC = () => {
   const navigation = useNavigation();
@@ -36,8 +45,31 @@ const SignUp: React.FC = () => {
     );
   }, []);
 
-  const onSubmitForm = useCallback((data: object) => {
-    console.log(data);
+  const onSubmitForm = useCallback(async (data: SignUpFormData) => {
+    try {
+      formRef.current?.setErrors({});
+      const schema = Yup.object().shape({
+        email: Yup.string()
+          .email('E-mail inválido')
+          .required('E-mail obrigatório'),
+        password: Yup.string().required(
+          'Senha obrigatória com grande mensagem de erro',
+        ),
+      });
+
+      await schema.validate(data, { abortEarly: false });
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = extractValidationMessage(err);
+        formRef.current?.setErrors(errors);
+      } else {
+        Alert.alert(
+          'Erro na autenticação',
+          'Usuário e/ou senha incorretos',
+          [],
+        );
+      }
+    }
   }, []);
   return (
     <>
