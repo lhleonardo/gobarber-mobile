@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
@@ -23,13 +23,34 @@ import { Button } from '../../components/Button';
 
 import logo from '../../assets/logo.png';
 
-import { Container, Text, BackToSignIn, BackToSignInText } from './styles';
+import {
+  Container,
+  Text,
+  Separator,
+  BackToSignIn,
+  BackToSignInText,
+} from './styles';
 
 interface SignUpFormData {
   email: string;
   name: string;
   password: string;
+  confirmPassword: string;
 }
+
+const schema = Yup.object().shape({
+  name: Yup.string().required('O nome é obrigatório'),
+  email: Yup.string()
+    .email('E-mail inválido')
+    .required('O e-mail é obrigatório'),
+  password: Yup.string().required(
+    'Senha obrigatória com grande mensagem de erro',
+  ),
+
+  confirmPassword: Yup.string()
+    .required('A confirmação da senha é obrigatória')
+    .oneOf([Yup.ref('password')], 'As senhas não coincidem'),
+});
 
 const SignUp: React.FC = () => {
   const navigation = useNavigation();
@@ -37,6 +58,7 @@ const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
+  const confirmPasswordInputRef = useRef<TextInput>(null);
   const scrollViewRef = useRef<ScrollView>(null);
 
   // registra o movimento de scroll quando o teclado é aberto em um campo
@@ -50,22 +72,15 @@ const SignUp: React.FC = () => {
     async (data: SignUpFormData) => {
       try {
         formRef.current?.setErrors({});
-        const schema = Yup.object().shape({
-          email: Yup.string()
-            .email('E-mail inválido')
-            .required('E-mail obrigatório'),
-          password: Yup.string().required(
-            'Senha obrigatória com grande mensagem de erro',
-          ),
-        });
 
         await schema.validate(data, { abortEarly: false });
         await api.post('/users', data);
 
-        navigation.goBack();
-        Alert.alert(
-          'Tudo pronto!',
-          'Seu usuário foi criado e você já pode entrar na aplicação.',
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: 'AccountCreated' }],
+          }),
         );
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -119,12 +134,26 @@ const SignUp: React.FC = () => {
                 returnKeyType="next"
                 onSubmitEditing={() => passwordInputRef.current?.focus()}
               />
+
+              <Separator />
+
               <Input
                 ref={passwordInputRef}
                 secureTextEntry
                 name="password"
                 icon="lock"
                 placeholder="Senha"
+                textContentType="newPassword"
+                returnKeyType="send"
+                onSubmitEditing={() => confirmPasswordInputRef.current?.focus()}
+              />
+
+              <Input
+                ref={confirmPasswordInputRef}
+                secureTextEntry
+                name="confirmPassword"
+                icon="lock"
+                placeholder="Confirme sua senha"
                 textContentType="newPassword"
                 returnKeyType="send"
                 onSubmitEditing={() => formRef.current?.submitForm()}
