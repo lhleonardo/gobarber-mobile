@@ -4,12 +4,12 @@ import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { Platform } from 'react-native';
 
 export const Container = styled.View`
-  flex: 1;
+  height: 100%;
+  margin: 20px 20px;
 
   align-items: center;
   justify-content: center;
-
-  padding: 0px 40px ${Platform.OS === 'android' ? 100 : 50}px;
+  padding-bottom: ${Platform.OS === 'android' ? 100 : 50}px;
 `;
 
 export const Text = styled.Text`

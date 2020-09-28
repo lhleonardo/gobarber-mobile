@@ -98,7 +98,7 @@ const SignUp: React.FC = () => {
             <Form
               ref={formRef}
               onSubmit={onSubmitForm}
-              style={{ flex: 1, width: '100%' }}
+              style={{ width: '100%' }}
             >
               <Input
                 autoCapitalize="words"
