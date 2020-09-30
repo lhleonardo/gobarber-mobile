@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StatusBar } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
@@ -15,6 +16,7 @@ import {
   ProfileButton,
   Avatar,
   Title,
+  Description,
   ProvidersList,
   Provider,
   ProviderAvatar,
@@ -36,6 +38,8 @@ const Dashboard: React.FC = () => {
 
   const [providers, setProviders] = useState<IProvider[]>([]);
 
+  const { navigate } = useNavigation();
+
   useEffect(() => {
     async function loadProviders() {
       const response = await api.get('providers');
@@ -46,6 +50,13 @@ const Dashboard: React.FC = () => {
     loadProviders();
   }, []);
 
+  const handleCreateAppointment = useCallback(
+    (providerId: string) => {
+      navigate('CreateAppointment', { providerId });
+    },
+    [navigate],
+  );
+
   return (
     <Container>
       <StatusBar
@@ -55,7 +66,7 @@ const Dashboard: React.FC = () => {
       />
       <Header>
         <HeaderTitle>
-          Bem vindo,
+          Bem vindo(a),
           {'\n'}
           <Username>{user.name}</Username>
         </HeaderTitle>
@@ -70,15 +81,24 @@ const Dashboard: React.FC = () => {
       <ProvidersList
         data={providers}
         keyExtractor={provider => provider.id}
-        ListHeaderComponent={<Title>Cabeleireiros</Title>}
+        ListHeaderComponent={
+          <>
+            <Title>Cabeleireiros</Title>
+            <Description>
+              Selecione o profissional que deseja atendimento
+            </Description>
+          </>
+        }
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <Provider>
+        renderItem={({ item: provider }) => (
+          <Provider onPress={() => handleCreateAppointment(provider.id)}>
             <ProviderAvatar
-              source={item.avatarURL ? { uri: item.avatarURL } : noAvatar}
+              source={
+                provider.avatarURL ? { uri: provider.avatarURL } : noAvatar
+              }
             />
             <ProviderInfo>
-              <ProviderName>{item.name}</ProviderName>
+              <ProviderName>{provider.name}</ProviderName>
               <ProviderDays>
                 <Icon
                   style={{ marginRight: 8 }}

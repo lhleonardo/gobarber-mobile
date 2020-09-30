@@ -44,6 +44,13 @@ export const Title = styled.Text`
   font-family: 'RobotoSlab-Medium';
   font-size: 24px;
   color: #f4ede8;
+`;
+
+export const Description = styled.Text`
+  font-family: 'RobotoSlab-Regilar';
+  margin-top: 8px;
+  font-size: 14px;
+  color: #f4ede8;
 
   margin-bottom: 24px;
 `;
