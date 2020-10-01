@@ -215,9 +215,12 @@ const CreateAppointment: React.FC = () => {
           index: 1,
           routes: [
             {
-              name: 'AccountCreated',
+              name: 'AppointmentCreated',
               params: {
                 date: date.getTime(),
+                provider: providers.find(
+                  provider => provider.id === selectedProvider,
+                )?.name,
               },
             },
           ],
@@ -231,7 +234,7 @@ const CreateAppointment: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedHour, selectedDate, selectedProvider, dispatch]);
+  }, [selectedHour, selectedDate, selectedProvider, dispatch, providers]);
 
   return (
     <Container>
@@ -298,7 +301,7 @@ const CreateAppointment: React.FC = () => {
 
           <Period>
             <PeriodTitle>Manhã</PeriodTitle>
-            {afternoonAvailability.length === 0 && (
+            {morningAvailability.length === 0 && (
               <NoSessions>
                 <Icon name="frown" color="#ff9000" size={18} />
                 <NoSessionsText>Não há horários disponíveis</NoSessionsText>
