@@ -33,17 +33,21 @@ const MyInput: React.ForwardRefRenderFunction<InputRefProps, InputProps> = (
   const [focus, setFocused] = useState(false);
 
   const { registerField, defaultValue = '', fieldName, error } = useField(name);
+
   const inputValueRef = useRef<InputValueReference>({
     value: defaultValue,
   });
+
   const inputElementRef = useRef<any>(null);
 
   const handleInputFocus = useCallback(() => setFocused(true), []);
+
   const handleInputBlur = useCallback(() => {
     setFocused(false);
 
     setIsFilled(!!inputValueRef.current.value);
   }, []);
+
   // passar funcionalidade de um componente interno para componente pai
   // Quando alguém chamar o componente e usar uma referência,
   // tal como  <MyInput ref={inputRef}>, inputRef terá o método focus()
@@ -54,11 +58,15 @@ const MyInput: React.ForwardRefRenderFunction<InputRefProps, InputProps> = (
   }));
 
   useEffect(() => {
+    inputValueRef.current.value = defaultValue;
+  }, [defaultValue]);
+
+  useEffect(() => {
     registerField<string>({
       name: fieldName,
       ref: inputValueRef.current,
       path: 'value',
-      setValue(ref: any, value) {
+      setValue(elementRef: unknown, value) {
         inputValueRef.current.value = value;
         inputElementRef.current.setNativeProps({ text: value });
       },
@@ -68,6 +76,8 @@ const MyInput: React.ForwardRefRenderFunction<InputRefProps, InputProps> = (
         inputElementRef.current.clear();
       },
     });
+
+    setIsFilled(!!inputValueRef.current.value);
   }, [fieldName, registerField]);
   return (
     <Container isFocused={focus} hasErrors={!!error}>
@@ -81,6 +91,7 @@ const MyInput: React.ForwardRefRenderFunction<InputRefProps, InputProps> = (
         keyboardAppearance="dark"
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
+        defaultValue={defaultValue}
         placeholderTextColor="#666360"
         onChangeText={value => {
           inputValueRef.current.value = value;
