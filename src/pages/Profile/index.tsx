@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { FormHandles } from '@unform/core';
 import Icon from 'react-native-vector-icons/Feather';
 import {
@@ -68,6 +68,7 @@ interface IProfileFormData {
 const Profile: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
+  const nameInputRef = useRef<TextInput>(null);
   const emailInputRef = useRef<TextInput>(null);
   const oldPasswordInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
@@ -116,6 +117,8 @@ const Profile: React.FC = () => {
     [updateProfile, goBack],
   );
 
+  const buttonEnabled = useMemo(() => {}, []);
+
   return (
     <KeyboardAvoidingView
       enabled
@@ -150,6 +153,7 @@ const Profile: React.FC = () => {
             </ImageContainer>
             <Form initialData={user} ref={formRef} onSubmit={handleSubmit}>
               <Input
+                ref={nameInputRef}
                 name="name"
                 placeholder="Nome completo"
                 icon="user"
@@ -199,7 +203,10 @@ const Profile: React.FC = () => {
                 onSubmitEditing={() => formRef.current?.submitForm()}
               />
 
-              <Button onPress={() => formRef.current?.submitForm()}>
+              <Button
+                enabled={false}
+                onPress={() => formRef.current?.submitForm()}
+              >
                 Confirmar mudanças
               </Button>
             </Form>

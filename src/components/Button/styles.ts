@@ -1,7 +1,11 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import { RectButton } from 'react-native-gesture-handler';
 
-export const Container = styled(RectButton)`
+interface IButtonProps {
+  enabled?: boolean;
+}
+
+export const Container = styled(RectButton)<IButtonProps>`
   height: 50px;
 
   background: #ff9000;
@@ -11,6 +15,12 @@ export const Container = styled(RectButton)`
   align-items: center;
 
   margin-top: 8px;
+
+  ${props =>
+    !props.enabled &&
+    css`
+      opacity: 0.4;
+    `}
 `;
 
 export const ButtonText = styled.Text`
