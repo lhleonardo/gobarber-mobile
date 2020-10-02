@@ -52,7 +52,9 @@ const AppointmentCreated: React.FC = () => {
       <Title>Agendamento Concluído</Title>
       <Information>{`${formattedDate} com ${provider}`}</Information>
 
-      <Button onPress={handlePressOk}>OK</Button>
+      <Button style={{ width: '80%' }} onPress={handlePressOk}>
+        OK
+      </Button>
     </Container>
   );
 };

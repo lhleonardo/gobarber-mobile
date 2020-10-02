@@ -22,10 +22,12 @@ const AccountCreated: React.FC = () => {
   return (
     <Container>
       <Image source={confirmation} width={80} height={80} />
-      <Title>Cadastramento concluído</Title>
-      <Information>Agora é só autenticar-se</Information>
+      <Title>Seu cadastro foi concluído</Title>
+      <Information>Agora você já pode entrar no app</Information>
 
-      <Button onPress={handlePressOk}>OK</Button>
+      <Button style={{ width: '100%' }} onPress={handlePressOk}>
+        Entrar no app
+      </Button>
     </Container>
   );
 };
