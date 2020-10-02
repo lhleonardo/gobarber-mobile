@@ -62,7 +62,7 @@ export interface IAvailability {
 
 const CreateAppointment: React.FC = () => {
   const { user } = useAuth();
-  const { goBack, dispatch } = useNavigation();
+  const { goBack, reset } = useNavigation();
 
   const route = useRoute();
   const routeParams = route.params as IRouteProps;
@@ -210,22 +210,21 @@ const CreateAppointment: React.FC = () => {
         date,
       });
 
-      dispatch(
-        CommonActions.reset({
-          index: 1,
-          routes: [
-            {
-              name: 'AppointmentCreated',
-              params: {
-                date: date.getTime(),
-                provider: providers.find(
-                  provider => provider.id === selectedProvider,
-                )?.name,
-              },
+      reset({
+        index: 1,
+        routes: [
+          { name: 'Dashboard' },
+          {
+            name: 'AppointmentCreated',
+            params: {
+              date: date.getTime(),
+              provider: providers.find(
+                provider => provider.id === selectedProvider,
+              )?.name,
             },
-          ],
-        }),
-      );
+          },
+        ],
+      });
     } catch {
       Alert.alert(
         'Não deu certo :(',
@@ -234,7 +233,7 @@ const CreateAppointment: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedHour, selectedDate, selectedProvider, dispatch, providers]);
+  }, [selectedHour, selectedDate, selectedProvider, reset, providers]);
 
   return (
     <Container>

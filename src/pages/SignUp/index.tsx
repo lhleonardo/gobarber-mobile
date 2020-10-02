@@ -76,12 +76,10 @@ const SignUp: React.FC = () => {
         await schema.validate(data, { abortEarly: false });
         await api.post('/users', data);
 
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 1,
-            routes: [{ name: 'AccountCreated' }],
-          }),
-        );
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'AccountCreated' }],
+        });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = extractValidationMessage(err);

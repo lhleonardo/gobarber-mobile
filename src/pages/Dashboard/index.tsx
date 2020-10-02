@@ -34,7 +34,7 @@ export interface IProvider {
 }
 
 const Dashboard: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
   const [providers, setProviders] = useState<IProvider[]>([]);
 
@@ -57,6 +57,8 @@ const Dashboard: React.FC = () => {
     [navigate],
   );
 
+  const handleShowProfile = useCallback(() => navigate('Profile'), [navigate]);
+
   return (
     <Container>
       <StatusBar
@@ -71,7 +73,7 @@ const Dashboard: React.FC = () => {
           <Username>{user.name}</Username>
         </HeaderTitle>
 
-        <ProfileButton onPress={() => signOut()}>
+        <ProfileButton onPress={handleShowProfile}>
           <Avatar
             source={user.avatarURL ? { uri: user.avatarURL } : noAvatar}
           />
@@ -81,14 +83,14 @@ const Dashboard: React.FC = () => {
       <ProvidersList
         data={providers}
         keyExtractor={provider => provider.id}
-        ListHeaderComponent={
+        ListHeaderComponent={() => (
           <>
             <Title>Cabeleireiros</Title>
             <Description>
               Selecione o profissional que deseja atendimento
             </Description>
           </>
-        }
+        )}
         showsVerticalScrollIndicator={false}
         renderItem={({ item: provider }) => (
           <Provider onPress={() => handleCreateAppointment(provider.id)}>
