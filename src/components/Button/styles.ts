@@ -17,7 +17,7 @@ export const Container = styled(RectButton)<IButtonProps>`
   margin-top: 8px;
 
   ${props =>
-    !props.enabled &&
+    props.enabled === false &&
     css`
       opacity: 0.4;
     `}

@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import Icon from 'react-native-vector-icons/Feather';
 import {
@@ -8,8 +8,10 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import * as Yup from 'yup';
+import ImagePicker from 'react-native-image-picker';
 import extractValidationMessage from '../../utils/extractValidationMessage';
 import { Input } from '../../components/Input';
 import { useAuth } from '../../hooks/auth';
@@ -74,9 +76,65 @@ const Profile: React.FC = () => {
   const passwordInputRef = useRef<TextInput>(null);
   const confirmPasswordInputRef = useRef<TextInput>(null);
 
+  const [updatingImage, setUpdatingImage] = useState(false);
+  const [updatingData, setUpdatingData] = useState(false);
+
   const { goBack } = useNavigation();
 
   const { user, signOut, updateProfile } = useAuth();
+
+  const handleChangeAvatar = useCallback(() => {
+    setUpdatingImage(true);
+    ImagePicker.showImagePicker(
+      {
+        title: 'Escolha uma foto',
+        cancelButtonTitle: 'Cancelar',
+        takePhotoButtonTitle: 'Tirar uma foto',
+        chooseFromLibraryButtonTitle: 'Escolher da galeria',
+      },
+      response => {
+        if (response.didCancel) {
+          setUpdatingImage(false);
+          return;
+        }
+
+        if (response.error) {
+          setUpdatingImage(false);
+          Alert.alert(
+            'Falha ao modificar a foto',
+            'Algo de errado aconteceu ao tentar escolher a foto.',
+          );
+        }
+
+        // foto foi escolhida
+        const formData = new FormData();
+
+        formData.append('avatar', {
+          type: 'image/jpeg',
+          uri: response.uri,
+          name: `${user.id}.jpeg`,
+        });
+
+        api
+          .patch('/users/avatar', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+          .then(apiResponse => {
+            updateProfile(apiResponse.data);
+            setUpdatingImage(false);
+          })
+          .catch(() => {
+            Alert.alert(
+              'Falha na atualização',
+              'Um erro aconteceu ao salvar a sua nova imagem. Tente mais tarde.',
+            );
+            setUpdatingImage(false);
+          });
+      },
+    );
+  }, [user.id, updateProfile]);
 
   const handleSubmit = useCallback(
     async (data: IProfileFormData) => {
@@ -117,7 +175,16 @@ const Profile: React.FC = () => {
     [updateProfile, goBack],
   );
 
-  const buttonEnabled = useMemo(() => {}, []);
+  const handleSignOutRequest = useCallback(() => {
+    Alert.alert(
+      'Desconectar',
+      'Você quer realmente desconectar da sua conta?',
+      [
+        { text: 'Quero sair', style: 'default', onPress: () => signOut() },
+        { text: 'Continuar conectado', style: 'cancel' },
+      ],
+    );
+  }, [signOut]);
 
   return (
     <KeyboardAvoidingView
@@ -137,7 +204,7 @@ const Profile: React.FC = () => {
 
             <HeaderText>Meu perfil</HeaderText>
 
-            <LogoutButton onPress={() => signOut()}>
+            <LogoutButton onPress={handleSignOutRequest}>
               <Icon color="#999591" size={22} name="power" />
             </LogoutButton>
           </Header>
@@ -147,8 +214,12 @@ const Profile: React.FC = () => {
               <UserAvatar
                 source={user.avatarURL ? { uri: user.avatarURL } : noAvatar}
               />
-              <ChangeAvatarButton>
-                <Icon name="camera" size={22} color="#312E38" />
+              <ChangeAvatarButton onPress={handleChangeAvatar}>
+                {updatingImage ? (
+                  <ActivityIndicator size={22} color="#312E38" />
+                ) : (
+                  <Icon name="camera" size={22} color="#312E38" />
+                )}
               </ChangeAvatarButton>
             </ImageContainer>
             <Form initialData={user} ref={formRef} onSubmit={handleSubmit}>
@@ -203,10 +274,7 @@ const Profile: React.FC = () => {
                 onSubmitEditing={() => formRef.current?.submitForm()}
               />
 
-              <Button
-                enabled={false}
-                onPress={() => formRef.current?.submitForm()}
-              >
+              <Button onPress={() => formRef.current?.submitForm()}>
                 Confirmar mudanças
               </Button>
             </Form>
